@@ -1,5 +1,5 @@
-# Pacote de integração de estoque (SOAP-XML)
-Integre seu site facilmente ao Smart Dealer
+# Pacote de integração SD (SOAP-XML)
+Integre seu site facilmente ao seu estoque através do Smart Dealer.
 
 ### Aviso
 
