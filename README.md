@@ -1,2 +1,10 @@
-# sdpack
-Pacote de integração de estoque com o Smart Dealer
+# Pacote de integração de estoque (SOAP-XML)
+Integre seu site facilmente ao Smart Dealer
+
+### Aviso
+
+Os métodos deste webservice estão sendo migrados para a nova [Api Restful](https://github.com/smartdealer/sdapi) de integração e sua implementação será descontinuada (deprecated).
+
+### Download da documentação completa
+
+[Baixar documentação (v 4.5.5)](https://github.com/smartdealer/sdpack/blob/master/docs/%5BSDS%5D%20Manual%20de%20Integra%C3%A7%C3%A3o%20-%20Smart%20Dealer%20Webservice%20v4.5.5.pdf)
