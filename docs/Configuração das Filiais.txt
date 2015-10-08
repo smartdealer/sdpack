@@ -1,0 +1,5 @@
+Exemplo:
+
+CÓDIGO  NOME DA FILIAL
+1	MATRIZ
+2	FILIAL

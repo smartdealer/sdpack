@@ -1,0 +1,17 @@
+# PACOTE DE INTEGRAÇÃO #
+
+Contempla os seguintes itens:
+
+1. Manual de Integração
+2. Sistema "Getimage" para cacheamento local das imagens
+3. Exemplos do uso dos métodos na linguagem de programação PHP
+
+Proibida a reprodução total ou parcial dos arquivos e documentos contidos neste pacote de integração através de quaisquer meios, sem a permissão por escrito do proprietário dos direitos autorais, Smart Dealer Soluções em Software Ltda, sob o número do CNPJ 14.361.305/0001-33.
+
+-- 
+Atualização 20.08.2014
+
+Em caso de dúvidas:
+
+contato@smartdealership.com.br
++55 (48)3025-1772
