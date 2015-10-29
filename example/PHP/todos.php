@@ -19,7 +19,7 @@
   #                                       #
   #########################################
 
-  Parte integrando da Suite Smart Dealership
+  Parte integrado da Suite Smart Dealer
   Todos os direitos reservados.
 
  */
@@ -32,18 +32,23 @@ ini_set('display_errors', 1);
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>Untitled Document</title>
+        <title>Validação dos métodos SMART DEALER</title>
     </head>
-
     <body>
         <?php
-        # Carrega o módulo NuSOAP 
+        # adiciona a lib Nusoap
         require('./nusoap/nusoap.php');
 
-        # Instância Objeto nusoap_client 
-        $WS_SDS = new nusoap_client('http://{cliente].smartdealer.com.br/webservice/core.php?wsdl', true); // seta a url do cliente
-        # Autenticação no WS do Smart Dealer 
-        $WS_SDS->setCredentials('{usuário}', '{senha}'); // seta o usuário e senha da autenticação HTTP
+        # nome da instância do cliente (ex: grupox)
+        $owner = '{instancia}';     // alterar
+        $login = '{usuario}';       // alterar
+        $passw = '{senha}';         // alterar
+
+        # cria a conexão com o webservice
+        $WS_SDS = new nusoap_client('http://' . $owner . '.smartdealer.com.br/webservice/core.php?wsdl', true);
+
+        # autentica o usuário  
+        $WS_SDS->setCredentials($login, $passw); // seta o usuário e senha da autenticação HTTP
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - //
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - //
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - //
@@ -97,13 +102,18 @@ ini_set('display_errors', 1);
 
         # Exemplo de montagem de imagem...
 
+        $vn_id = 0;
+        $vn_cod = 0;
+
         foreach ($out as $car) {
             $a = explode('/', $car['url_imagem']);
             $b = explode('.', $a[1]);
 
+            $vn_cod = $car['id'];
+            $vn_id = $car['veiculo_chassi'];
 
             echo $car['modelo'] . '<br />';
-            echo '<img src="https://core.smartdealer.com.br/webservice/get-image.php?m=' . $a[0] . '&c=' . $b[0] . '&img_w=300&o=prima_via" style="border:none;"><br />';
+            echo '<img src="https://core.smartdealer.com.br/webservice/get-image.php?m=' . $a[0] . '&c=' . $b[0] . '&img_w=300&o=' . $owner . '" style="border:none;"><br />';
         }
 
 
@@ -144,10 +154,13 @@ ini_set('display_errors', 1);
 
         # Exemplo de montagem de imagem...
 
+        $vsn_id = 0;
+
         foreach ($out as $car) {
 
+            $vsn_id = $car['placa'];
             echo $car['modelo'] . '<br />';
-            echo '<img src="http://core.smartdealer.com.br/img/' . $car['id'] . '/prima_via/300/1.jpg" style="border:none;"><br />';
+            echo '<img src="http://core.smartdealer.com.br/img/' . $car['id'] . '/' . $owner . '/300/1.jpg" style="border:none;"><br />';
         }
 
 
@@ -168,7 +181,6 @@ ini_set('display_errors', 1);
             'qtd_por_pp' => 2     // -> (integer) Quantidade de registros por página
         );
 
-
         # Chamada do Método 
         $out = $WS_SDS->call('CarrosCorsia', array('parametrospage' => $in));
 
@@ -177,6 +189,20 @@ ini_set('display_errors', 1);
         print_r($out);
         echo '</pre>';
 
+        # Exemplo de montagem de imagem...
+
+        $cr_id = 0;
+
+        foreach ($out as $car) {
+            $a = explode('/', $car['url_imagem']);
+            $b = explode('.', $a[1]);
+
+            $cr_id = $car['id'];
+
+            echo $car['modelo'] . '<br />';
+            echo '<img src="https://core.smartdealer.com.br/webservice/get-image.php?m=' . $a[0] . '&c=' . $b[0] . '&img_w=300&o=' . $owner . '" style="border:none;"><br />';
+        }
+
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - //
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - //
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - //
@@ -184,7 +210,7 @@ ini_set('display_errors', 1);
         echo '<h1>Exemplo de consumo do M&eacute;todo "CarroUsado" (Retorna os dados de um ve&iacute;culo usado por sua placa)</h1>';
 
         # Parâmetros 
-        $in = 'MLE6373'; // -> (string) Placa do veículo desejado
+        $in = ($vsn_id) ? $vsn_id : 'MLE6373'; // -> (string) Placa do veículo desejado
         # Chamada do Método 
         $out = $WS_SDS->call('CarroUsado', array('placa' => $in));
 
@@ -200,7 +226,7 @@ ini_set('display_errors', 1);
         echo '<h1>Exemplo de consumo do M&eacute;todo "CarroNovo" (Retorna os dados de um ve&iacute;culo novo por seu chassi)</h1>';
 
         # Parâmetros 
-        $in = '3C3AFFAR0DT595805'; // -> (string) Chassi do veículo desejado
+        $in = ($vn_id) ? $vn_id : '3C3AFFAR0DT595805'; // -> (string) Chassi do veículo desejado
         # Chamada do Método 
         $out = $WS_SDS->call('CarroNovo', array('chassi' => $in));
 
@@ -216,7 +242,7 @@ ini_set('display_errors', 1);
         echo '<h1>Exemplo de consumo do M&eacute;todo "CarroCorsia" (Retorna os dados de um ve&iacute;culo novo por seu industrial)</h1>';
 
         # Parâmetros 
-        $in = '514147724'; // -> (string) Industrial do veículo desejado
+        $in = ($cr_id) ? $cr_id : '514147724'; // -> (string) Industrial do veículo desejado
         # Chamada do Método 
         $out = $WS_SDS->call('CarroCorsia', array('ind' => $in));
 
@@ -342,7 +368,7 @@ ini_set('display_errors', 1);
 
         # Parâmetros 
         $in = array(
-            'carro_id' => '3C3AFFAR0CT211410_01', // -> (string) Id do veículo como se encontra no retorno do WS (Chassi_Filial ou Industrial)
+            'carro_id' => $vn_cod, // -> (string) Id do veículo como se encontra no retorno do WS (Chassi_Filial ou Industrial)
             'nome' => 'Smart Dealership', // -> (string) Nome do cliente 
             'telefone' => '048 0000-0000', // -> (string) Telefone do Cliente
             'e_mail' => 'contato@smartdealership.com.br', // -> (string) E-mail do Cliente
@@ -355,7 +381,7 @@ ini_set('display_errors', 1);
 
         # Saída em String 
         echo '<pre>';
-        print_r($out);
+        print_r($out); // se retornar 'sucesso' o contato (interesse web) foi registrado no sistema
         echo '</pre>';
         ?>
     </body>
