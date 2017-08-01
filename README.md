@@ -1,9 +1,11 @@
 # Pacote de integração SD (SOAP-XML)
 Integre seu site facilmente ao seu estoque através do Smart Dealer.
 
-### Aviso
+### Atenção
 
-Os métodos deste webservice estão sendo migrados para a nova [Api Restful](https://github.com/smartdealer/sdapi) de integração e sua implementação será descontinuada (deprecated).
+A implementação desta integração foi descontinuada, porém o webservice ainda continuará ativo para clientes já conectados via site.
+
+Os métodos deste webservice estão sendo migrados para a nova [Api Restful](https://github.com/smartdealer/sdapi) de integração, disponível somente para clientes Smart, com o produto "site automotivo" contratado.
 
 ### Download da documentação completa
 
