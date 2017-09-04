@@ -18,7 +18,12 @@ define('CACHE_DEFAULT', CURRENT_DIR . 'default' . DS);
 
 function DefaultImage() {
 
+    global $quality, $thumb_h, $thumb_w;
+
     $defaultImg = CACHE_DEFAULT . 'default.jpg';
+
+    $thumb_h = ($thumb_h == -1) ? 0 : $thumb_h;
+    $thumb_w = ($thumb_w == -1) ? 0 : $thumb_w;
 
     // valid image
     if (file_exists($defaultImg)) {
@@ -26,27 +31,26 @@ function DefaultImage() {
         // read image
         $sendImg = DetectImage($defaultImg, 1);
 
-        $thumb = null;
-
         $info = array(
             imagesx($sendImg),
             imagesy($sendImg),
             IMAGETYPE_JPEG
         );
 
-        // cordenates
-        $inew_width = (isset($_GET['img_w'])) ? (int) $_GET['img_w'] : 0;
-        $auto_height = (isset($_GET['img_h'])) ? (int) $_GET['img_h'] : 0;
-
-        $thumb = SmartResizeImage($defaultImg, $inew_width, $auto_height, null, $info, false);
+        // create thumb
+        $thumb = SmartResizeImage($defaultImg, $thumb_w, $thumb_h, null, $info, false);
 
         // check if image was rendenized
-        $return = empty($thumb) ? $sendImg : $thumb;
+        $return = ($thumb) ? $thumb : $sendImg;
+
+        // valid quality
+        $a = (min(9, $quality / 10) - 9);
+        $quality = ($a >= 0 && $a <= 9) ? $a : 5;
 
         // send image
         header('Content-type: image/jpg');
         header('Cache-Control: public');
-        imagepng($return);
+        imagepng($return, null, $quality);
         imagedestroy($return);
 
         exit(0);
@@ -100,7 +104,7 @@ function DetectImage($uri, $local = 0) {
         $send = imagecreatefromstring(file_get_contents($uri));
     elseif (empty($send) && ($content = curl_file_get_contents($uri)))
         $send = imagecreatefromstring($content['content']);
-
+    
     // valid new image created
     if (empty($send) or ! is_resource($send))
         DefaultImage();
@@ -167,10 +171,14 @@ function SmartResizeImage($img, $w, $h, $newfilename, $imgInfo, $save = true) {
         imagesavealpha($newImg, true);
         $transparent = imagecolorallocatealpha($newImg, 255, 255, 255, 127);
         imagefilledrectangle($newImg, 0, 0, $nWidth, $nHeight, $transparent);
-    }
 
-    // resample
-    imagecopyresampled($newImg, $im, 0, 0, 0, 0, $nWidth, $nHeight, $imgInfo[0], $imgInfo[1]);
+        // resize and resample
+        imagecopyresampled($newImg, $im, 0, 0, 0, 0, $nWidth, $nHeight, $imgInfo[0], $imgInfo[1]);
+    } else {
+
+        // resize
+        imagecopyresized($newImg, $im, 0, 0, 0, 0, $nWidth, $nHeight, $imgInfo[0], $imgInfo[1]);
+    }
 
     if ($save):
 
@@ -178,9 +186,9 @@ function SmartResizeImage($img, $w, $h, $newfilename, $imgInfo, $save = true) {
         switch ($imgInfo[2]) {
             case 1: imagegif($newImg, $newfilename);
                 break;
-            case 2: imagejpeg($newImg, $newfilename);
+            case 2: imagejpeg($newImg, $newfilename, 100);
                 break;
-            case 3: imagepng($newImg, $newfilename);
+            case 3: imagepng($newImg, $newfilename, 0);
                 break;
             default: trigger_error('image resize fail!', E_USER_WARNING);
                 break;
@@ -214,6 +222,8 @@ function SendImageFromCache($src, $cached = true) {
 // - - - - - - - - - - - - - - - - - - -	
 
 function CreateImageToCache($handle, $thumb_w, $thumb_h, $back, $opt, $src) {
+
+    global $quality;
 
     $remote_image = DetectImage($handle);
 
@@ -294,7 +304,7 @@ function CreateImageToCache($handle, $thumb_w, $thumb_h, $back, $opt, $src) {
     endif;
 
     // Armazena a imagem localmente
-    imagejpeg($thumb, $src, 80);
+    imagejpeg($thumb, $src, $quality);
 
     // Envia a imagem
     SendImageFromCache($src, 0);

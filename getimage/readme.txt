@@ -1,17 +1,12 @@
 ﻿/**
  * Local image cacher, to loading images fasting
  *
- * @package   Smart Dealership, Numeor Framework (c)
+ * @package   Smart Dealership, Apollo14 Framework (c)
  * @author    Patrick Otto <patrick@smartdealership.com.br>
- * @author    William Pamplona <will@smartdealership.com.br>
- * @author    Jonas de Magalhães Gomes <jonas@smartdealership.com.br>
- * @version   1.0.10
- * @copyright Smart Dealer (c), Sept 2014-2015
- * @see       http://www.smartdealer.com.br
- * 
- * Installation Suport
- * Mail contato@smartdealership.com.br
- * Phone +55 (48) 3035-1772
+ * @author    Jean Carlos dos Santos <jean@smartdealership.com.br>
+ * @version   2.0.1
+ * @copyright Smart Dealer (c), Sept 2014-2017
+ * @see       http://smartdealer.com.br
  */
 
 INSTALLATION STEPS 

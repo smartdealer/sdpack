@@ -22,21 +22,24 @@
  * @example 345OC31/PW3/prima/500/.jpg
  * @example 3FAHP0JAXAR397388_01/prima/500/1.jpg
  */
-
 $back = array(255, 255, 255);
 $validParams = array_flip(array('img_bg', 'img_q', 'img_h'));
 $opt = 'default';
 $ttl = 1800;
 $ext = '.cache';
 $cache = true;
+$defaultQuality = 78;
 $validRemote = false;
 $filterImage = false;
-$disableSafe = false;
 
-if ($disableSafe) {
-    ini_set('safe_mode', 'Off');
-    ini_set('open_basedir', '');
-}
+// request width
+$thumb_w = !empty($_GET['img_w']) ? (int) $_GET['img_w'] : -1;
+
+// request height
+$thumb_h = !empty($_GET['img_h']) ? (int) $_GET['img_h'] : -1;
+
+// request quality of image
+$quality = !empty($_GET['img_q']) ? (int) $_GET['img_q'] : $defaultQuality;
 
 // include libs
 require('includes/functions.php');
@@ -61,15 +64,6 @@ if (is_array($b))
             $v = 0;
         $back[$k] = (int) $v;
     endforeach;
-
-// request width
-$thumb_w = !empty($_GET['img_w']) ? (int) $_GET['img_w'] : -1;
-
-// request height
-$thumb_h = !empty($_GET['img_h']) ? (int) $_GET['img_h'] : -1;
-
-// request quality of image
-$quality = !empty($_GET['img_q']) ? (int) $_GET['img_q'] : 80;
 
 if (isset($_GET['reservado']))
     $opt = '_reservado_';
@@ -100,7 +94,7 @@ if ($rw = (!empty($_REQUEST['m']) and ! empty($_REQUEST['c'])) or ( isset($_REQU
     $queryString = http_build_query(array_intersect_key(filter_input_array(INPUT_GET), $validParams));
 
     // mount url core integration
-    $handle = 'https://core.smartdealer.com.br/img/' . implode('/', array($model, $color, $owner, $thumb_w, $index)) . '.jpg?' . $queryString;
+    $handle = 'https://core.smartdealer.com.br/img/' . implode('/', array(urlencode($model), urlencode($color), $owner, $thumb_w, $index)) . '.jpg?' . $queryString;
 
     if ($thumb_h != -1)
         $handle .= '&img_h=' . $thumb_h;
@@ -129,7 +123,7 @@ elseif (isset($_GET['i']) and isset($_GET['o'])):
     $src = CACHE_DIR . sha1(CACHE_DIR . $image . $owner . $index . $thumb_w . $thumb_h . $quality . $opt . ((!empty($_GET['img_bg']) and count(explode(',', $_GET['img_bg'])) == 3) ? $_GET['img_bg'] : '255,255,255')) . $ext;
 
     // mount url core integration
-    $handle = 'https://core.smartdealer.com.br/img/' . $image . '/' . $owner . '/' . $thumb_w . '/' . $index . '.jpg';
+    $handle = 'https://core.smartdealer.com.br/img/' . urlencode($image) . '/' . $owner . '/' . $thumb_w . '/' . $index . '.jpg';
 
     // check if file exists
     if ($cache && file_exists($src))
